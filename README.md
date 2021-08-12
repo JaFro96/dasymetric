@@ -1,7 +1,7 @@
 
 # dasymetric
 
-<!-- badges: start -->
+<!-- badges: start  -->
 <!-- badges: end -->
 
 The goal of dasymetric is to display statistical data in meaningful
