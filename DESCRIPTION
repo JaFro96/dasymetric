@@ -1,15 +1,14 @@
 Package: dasymetric
-Title: What the Package Does (One Line, Title Case)
+Title: Create Dasymetric Maps
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Jannis",
            family = "Fröhlking",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
+           email = "j_froe09@uni-muenster.de",
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+Description: Dasymetric maps display statistical data in meaningful spatial zones.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
