@@ -1,7 +1,7 @@
 
 # dasymetric
 
-<!-- badges: start  -->
+<!-- badges: start -->
 <!-- badges: end -->
 
 The goal of dasymetric is to display statistical data in meaningful
@@ -24,19 +24,6 @@ devtools::install_github("JaFro96/dasymetric")
 ```
 
 ## Example
-
-This is a basic example which shows you how to solve a common problem:
-
-``` r
-library(dasymetric)
-## basic example code
-dasymetric_map(1,2,3)
-#> [1] "TODO!"
-```
-
-<img src="man/figures/README-example-1.png" width="100%" />
-
-    #> POINT (0 1)
 
 As a case study the districts of Münster were chosen and we try to
 predict the population counts on the basis of land cover data.

@@ -34,14 +34,6 @@ devtools::install_github("JaFro96/dasymetric")
 ```
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
-
-```{r example}
-library(dasymetric)
-## basic example code
-dasymetric_map(1,2,3)
-```
-
 As a case study the districts of Münster were chosen and we try to predict the population counts on the basis of land cover data.
 
 ```{r districts, echo = FALSE}
