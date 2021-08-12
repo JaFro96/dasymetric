@@ -2,7 +2,7 @@ Package: dasymetric
 Title: What the Package Does (One Line, Title Case)
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
+    person(given = "Jannis",
            family = "Last",
            role = c("aut", "cre"),
            email = "first.last@example.com",
