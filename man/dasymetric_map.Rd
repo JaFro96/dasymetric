@@ -14,7 +14,7 @@ dasymetric_map(x, ancillary_data, target_geom)
 \item{target_geom}{sf}
 }
 \value{
-
+sf
 }
 \description{
 Create a dasymetric map

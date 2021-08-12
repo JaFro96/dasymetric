@@ -4,7 +4,7 @@
 #' @param ancillary_data sf
 #' @param target_geom sf
 #'
-#' @return
+#' @return sf
 #' @export
 #'
 #' @examples dasymetric_map(a,b,c)
