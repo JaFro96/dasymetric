@@ -1,5 +1,7 @@
 #' Create a dasymetric map
 #'
+#' @import graphics
+#'
 #' @param x numeric
 #' @param ancillary_data sf
 #' @param target_geom sf

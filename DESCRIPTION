@@ -1,6 +1,6 @@
 Package: dasymetric
 Title: Create Dasymetric Maps
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: 
     person(given = "Jannis",
            family = "Fröhlking",
@@ -17,4 +17,5 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Imports: 
+    graphics,
     sf
