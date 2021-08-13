@@ -30,6 +30,8 @@ predict the population counts on the basis of land cover data.
 
 <img src="man/figures/README-districts-1.png" width="100%" />
 
+<img src="man/figures/README-land_cover-1.png" width="100%" />
+
 You’ll still need to render `README.Rmd` regularly, to keep `README.md`
 up-to-date. `devtools::build_readme()` is handy for this. You could also
 use GitHub Actions to re-render `README.Rmd` every time you push. An
