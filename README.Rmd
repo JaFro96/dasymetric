@@ -2,7 +2,7 @@
 output: github_document
 ---
 
-```{r, include = FALSE}
+```{r chunkoptions, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -31,13 +31,34 @@ devtools::install_github("JaFro96/dasymetric")
 As a case study we try to predict population counts for each districts of Münster with land cover data as ancillary information.
 
 ```{r districts, echo = FALSE}
+require(sf)
 load("data/population_counts.rda")
-plot(population_counts[4],main="Population (2018)")
+plot(population_counts["pop_counts"],lwd = 2, main="Population (2018)")
 ```
+
+That's how the population is distributed using area-weighted interpolation:
+
+```{r aw-interpolation, echo = FALSE}
+require(areal)
+# total population
+print(sum(population_counts["pop_counts"]$pop_counts)) # 310610
+# big polygon
+source_geom = st_union(population_counts)
+source = st_sf(ID = 1, pop_sum = sum(population_counts["pop_counts"]$pop_counts), source_geom)
+aw_pop = aw_interpolate(population_counts,NR_STATIST,source = source, sid = ID,weight = "sum", extensive = "pop_sum", output = "sf")
+plot(aw_pop["pop_sum"],main="Area-weighted Interpolation of Population (2018)")
+```
+
+```{r dasymetric method, echo = FALSE}
+# TODO: plot dasymetric result
+```
+
 
 ```{r land_cover, echo = FALSE}
 load("data/corine_18.rda")
+require(sf)
 plot(corine_18[1],main="Land cover of Münster")
+plot(st_geometry(population_counts),lwd = 3, add=TRUE)
 ```
 
 ## Data Sources

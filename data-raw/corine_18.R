@@ -14,7 +14,6 @@ shp_list[[2]] = st_crop(shp_list[[2]],st_bbox(districts))
 shp_list[[3]] = st_crop(shp_list[[3]],st_bbox(districts))
 shp_list[[4]] = st_crop(shp_list[[4]],st_bbox(districts))
 shp_list[[5]] = st_crop(shp_list[[5]],st_bbox(districts))
-#shp_list = lapply(shp_list,st_crop(y = st_bbox(districts)))
 corine_18 = rbind(shp_list[[1]], shp_list[[2]], shp_list[[3]], shp_list[[4]], shp_list[[5]])
 # corine_18 = st_crop(SHP_file, st_bbox(districts))
 

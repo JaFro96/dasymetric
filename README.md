@@ -22,7 +22,18 @@ devtools::install_github("JaFro96/dasymetric")
 As a case study we try to predict population counts for each districts
 of Münster with land cover data as ancillary information.
 
+    #> Lade nötiges Paket: sf
+    #> Linking to GEOS 3.9.0, GDAL 3.2.1, PROJ 7.2.1
+
 <img src="man/figures/README-districts-1.png" width="100%" />
+
+That’s how the population is distributed using area-weighted
+interpolation:
+
+    #> Lade nötiges Paket: areal
+    #> [1] 310610
+
+<img src="man/figures/README-aw-interpolation-1.png" width="100%" />
 
 <img src="man/figures/README-land_cover-1.png" width="100%" />
 
