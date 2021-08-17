@@ -7,7 +7,7 @@
 prep_landuse(x, class_ids = c(111, 112))
 }
 \arguments{
-\item{x}{sf containing CORINE land use datalid char that identifies the column where the CLC-classnames are stored in}
+\item{x}{sf containing \emph{CORINE} land use data}
 
 \item{class_ids}{numeric identifiers that describes the urban CLC-classes (111 is Continuous urban fabric and 112 is Discontinuous urban fabric)}
 }
@@ -15,8 +15,11 @@ prep_landuse(x, class_ids = c(111, 112))
 sf containing geometries where people probably live
 }
 \description{
-Prepare land use data for binary dasymetric mapping
+Extract features of a \emph{CORINE} land use sf that cover urban area.
 }
 \examples{
 prep_landuse(corine_18)
+}
+\seealso{
+\code{\link{dasymetric_map}} for using the prepared dataset
 }

@@ -1,0 +1,21 @@
+---
+title: "Data Preparation and Dasymetric Maps"
+author: "Jannis Fröhlking"
+date: "2021-08-17"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Data Preparation and Dasymetric Maps}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(dasymetric)
+```

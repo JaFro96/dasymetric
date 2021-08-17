@@ -1,7 +1,7 @@
 
 # dasymetric
 
-<!-- badges: start  -->
+<!-- badges: start -->
 <!-- badges: end -->
 
 The goal of [dasymetric
@@ -19,8 +19,8 @@ devtools::install_github("JaFro96/dasymetric")
 
 ## Example
 
-As a case study we try to predict population counts for each districts
-of Münster with land cover data as ancillary information.
+As a case study we try to predict population counts for each district of
+Münster using land cover data as ancillary information.
 
     #> Lade nötiges Paket: sf
     #> Linking to GEOS 3.9.0, GDAL 3.2.1, PROJ 7.2.1
@@ -35,13 +35,8 @@ interpolation:
 <img src="man/figures/README-aw-interpolation-1.png" width="100%" />
 
     #> Lade nötiges Paket: dasymetric
-    #> Warning: attribute variables are assumed to be spatially constant throughout all
-    #> geometries
 
-    #> Warning: attribute variables are assumed to be spatially constant throughout all
-    #> geometries
-
-<img src="man/figures/README-dasymetric method-1.png" width="100%" />
+<img src="man/figures/README-dasymetric-method-1.png" width="100%" />
 
 ## Data Sources
 

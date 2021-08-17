@@ -1,11 +1,14 @@
 #' Prepare land use data for binary dasymetric mapping
 #'
-#' @param x sf containing CORINE land use data
+#' @description Extract features of a \emph{CORINE} land use sf that cover urban area.
+#'
+#' @param x sf containing \emph{CORINE} land use data
 #' @param class_ids numeric identifiers that describes the urban CLC-classes (111 is Continuous urban fabric and 112 is Discontinuous urban fabric)
 #'
 #' @return sf containing geometries where people probably live
 #' @export
 #'
+#' @seealso \code{\link{dasymetric_map}} for using the prepared dataset
 #'
 #' @examples
 #' prep_landuse(corine_18)
