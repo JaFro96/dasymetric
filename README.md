@@ -31,11 +31,17 @@ That’s how the population is distributed using area-weighted
 interpolation:
 
     #> Lade nötiges Paket: areal
-    #> [1] 310610
 
 <img src="man/figures/README-aw-interpolation-1.png" width="100%" />
 
-<img src="man/figures/README-land_cover-1.png" width="100%" />
+    #> Lade nötiges Paket: dasymetric
+    #> Warning: attribute variables are assumed to be spatially constant throughout all
+    #> geometries
+
+    #> Warning: attribute variables are assumed to be spatially constant throughout all
+    #> geometries
+
+<img src="man/figures/README-dasymetric method-1.png" width="100%" />
 
 ## Data Sources
 

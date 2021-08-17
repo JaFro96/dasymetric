@@ -33,15 +33,15 @@ As a case study we try to predict population counts for each districts of Münst
 ```{r districts, echo = FALSE}
 require(sf)
 load("data/population_counts.rda")
-plot(population_counts["pop_counts"],lwd = 2, main="Population (2018)")
+plot(population_counts["pop_counts"], main="Population (2018)")
 ```
 
 That's how the population is distributed using area-weighted interpolation:
 
-```{r aw-interpolation, echo = FALSE}
+```{r aw-interpolation, echo = FALSE, messages = FALSE}
 require(areal)
 # total population
-print(sum(population_counts["pop_counts"]$pop_counts)) # 310610
+# sum(population_counts["pop_counts"]$pop_counts) # 310610
 # big polygon
 source_geom = st_union(population_counts)
 source = st_sf(ID = 1, pop_sum = sum(population_counts["pop_counts"]$pop_counts), source_geom)
@@ -50,12 +50,15 @@ plot(aw_pop["pop_sum"],main="Area-weighted Interpolation of Population (2018)")
 ```
 
 ```{r dasymetric method, echo = FALSE}
-# TODO: plot dasymetric result
+require(dasymetric)
+load("data/corine_18.rda")
+urban = prep_landuse(corine_18)
+dm_pop = dasymetric_map(population_counts, source, urban, extensive = "pop_sum")
+plot(dm_pop["pop_sum"],main="Dasymetric population map based on land use information (2018)")
 ```
 
 
-```{r land_cover, echo = FALSE}
-load("data/corine_18.rda")
+```{r land_cover, echo = FALSE, include = FALSE}
 require(sf)
 plot(corine_18[1],main="Land cover of Münster")
 plot(st_geometry(population_counts),lwd = 3, add=TRUE)

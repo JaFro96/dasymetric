@@ -4,21 +4,28 @@
 \alias{dasymetric_map}
 \title{Create a dasymetric map}
 \usage{
-dasymetric_map(x, ancillary_data, target_geom)
+dasymetric_map(target, source, ancillary_data, tid = NULL, extensive = NULL)
 }
 \arguments{
-\item{x}{numeric}
+\item{target}{sf object containing geometry of the desired spatial zones}
 
-\item{ancillary_data}{sf}
+\item{source}{sf object that we want to interpolate}
 
-\item{target_geom}{sf}
+\item{ancillary_data}{sf object containing geometry that helps to better interpolate (i.e. land use, building footprints)}
+
+\item{tid}{Optional string denoting column with unique identifier for \code{target} geometries. Optional, and will otherwise be automatically generated}
+
+\item{extensive}{Required atomic vector of strings denoting columns in \code{source} with extensive variables (i.e. count data)}
 }
 \value{
 sf
 }
 \description{
-Create a dasymetric map
+Binary dasymetric mapping that uses urban areas to make more valuable predictions on population counts
 }
 \examples{
-dasymetric_map(a,b,c)
+source_geom = sf::st_union(population_counts)
+source = sf::st_sf(ID = 1, pop_sum = sum(population_counts["pop_counts"]$pop_counts), source_geom)
+urban = prep_landuse(corine_18)
+dasymetric_map(population_counts, source, urban, extensive = "pop_sum")
 }
