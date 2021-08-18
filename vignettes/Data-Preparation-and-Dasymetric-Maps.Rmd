@@ -9,13 +9,63 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r chunk-options, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 7,
+  fig.align="center"
 )
 ```
 
 ```{r setup}
 library(dasymetric)
+library(sf)
+library(tmap)
+library(dplyr)
 ```
+
+Dasymetric mapping is a mapping technique that  redistribute spatially extensive data using ancillary information to better represent an underlying statistical surface (Petrov, 2012). 
+
+This vignette:
+
+* describes how to prepare land use data as ancillary information
+* creates a dasymetric map of the population in Münster
+* compares the outcome with the true population counts and with a naive area-weighted interpolation
+
+## Data preparation
+
+Population data for the districts in Münster can be obtained by their [open data platform](https://opendata.stadt-muenster.de/dataset/geokoordinaten-der-stadtteil-grenzen-geometriedaten-der-kleinr%C3%A4umigen-gebietsgliederung).
+
+```{r districts}
+data(population_counts)
+plot(population_counts["pop_counts"], main="Population (2018)")
+```
+
+The European Union's Earth Observation Programme - Copernicus - offers freely and openly accessible services that are based on in situ and on satellite data. One of the six thematic services is land monitoring, which provides information on land cover in 44 classes. The latest product is based on Sentinel-2 satellite data from 2018 (European Environment Agency, 2018). The German _Bundesamt für Kartographie und Geodäsie_ provides data with the same nomenclature based on _Landbedeckungsmodell Deutschland 2018 (LBM-DE2018)_ [product](https://gdz.bkg.bund.de/index.php/default/digitale-geodaten/digitale-landschaftsmodelle/corine-land-cover-5-ha-stand-2018-clc5-2018.html) with a geometric detail of 5 hectare minimum mapping unit.
+
+```{r land-use}
+data(corine_18)
+grouped_cor = corine_18 |> group_by(CLC18) |> summarize(geometry = st_union(geometry))
+class_names = c("Continuous urban fabric","Discontinuous urban fabric",
+                "Industrial or commercial units","Road and rail networks and associated land",
+                "Port areas","Airports"," Mineral extraction sites","Dump sites",
+                "Green urban areas","Sport and leisure facilities",
+                "Non-irrigated arable land","Fruit trees and berry plantations",
+                "Pastures","Broad-leaved forest","Coniferous forest","Mixed forest",
+                "Natural grassland","Transitional woodland-scrub","Inland marshes",
+                "Peat bogs","Water courses","Water bodies")
+grouped_cor$class_names = class_names
+tmap_mode("view")
+tm_shape(grouped_cor) + tm_polygons("class_names")
+```
+
+For the following analysis I assume that people live in the two **urban fabric** land cover classes  ( _Continuous urban fabric_ , 111) and _Discontinuous urban fabric_ , 112).
+
+```{r}
+urban_fabric = grouped_cor|> filter(class_names %in% c("Continuous urban fabric","Discontinuous urban fabric"))
+tmap_mode("plot")
+tm_shape(urban_fabric) + tm_polygons("class_names")
+```
+

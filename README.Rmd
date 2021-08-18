@@ -61,7 +61,6 @@ plot(dm_pop["pop_sum"],breaks = c(0,5000,10000,15000,20000,25000,30000,35000,400
 ```{r land_cover, echo = FALSE, include = FALSE}
 require(sf)
 plot(corine_18[1],main="Land cover of Münster")
-plot(st_geometry(population_counts),lwd = 3, add=TRUE)
 ```
 
 ## Data Sources
