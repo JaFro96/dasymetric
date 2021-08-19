@@ -3,6 +3,7 @@
 #' @description Binary dasymetric mapping that uses urban areas to make more valuable predictions on population counts
 #'
 #' @import graphics
+#' @importFrom rlang .data
 #'
 #' @param target sf object containing geometry of the desired spatial zones
 #' @param source sf object that we want to interpolate
@@ -39,8 +40,8 @@ dasymetric_map <- function(target, source, ancillary_data, tid = NULL, extensive
   # Calculate Area as a Proportion of Source Area
   cov_area <- first_int |>
     sf::st_drop_geometry() |>
-    dplyr::group_by(AW_sid) |>
-    dplyr::summarise(AW_cov_area = sum(AW_area))
+    dplyr::group_by(.data$AW_sid) |>
+    dplyr::summarise(AW_cov_area = sum(.data$AW_area))
 
   first_int <- dplyr::left_join(first_int, cov_area, by = 'AW_sid')
   first_int['AW_area_prp'] <- as.numeric(first_int$AW_area / first_int$AW_cov_area)

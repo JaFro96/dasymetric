@@ -1,7 +1,7 @@
 
 # dasymetric
 
-<!-- badges: start  -->
+<!-- badges: start -->
 <!-- badges: end -->
 
 The goal of [dasymetric
@@ -36,7 +36,7 @@ interpolation:
 
     #> Lade nötiges Paket: dasymetric
 
-<img src="man/figures/README-dasymetric-method-1.png" width="100%" />
+<img src="man/figures/README-dasymetric-1.png" width="100%" />
 
 ## Data Sources
 

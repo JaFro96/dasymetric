@@ -2,6 +2,8 @@
 #'
 #' @description Extract features of a \emph{CORINE} land use sf that cover urban area.
 #'
+#' @importFrom rlang .data
+#'
 #' @param x sf containing \emph{CORINE} land use data
 #' @param class_ids numeric identifiers that describes the urban CLC-classes (111 is Continuous urban fabric and 112 is Discontinuous urban fabric)
 #'
@@ -13,6 +15,6 @@
 #' @examples
 #' prep_landuse(corine_18)
 prep_landuse <- function(x, class_ids=c(111,112)){
-  urban_fabric <- x |> dplyr::filter(CLC18 %in% class_ids)
+  urban_fabric <- x |> dplyr::filter(.data$CLC18 %in% class_ids)
   return(urban_fabric)
 }
