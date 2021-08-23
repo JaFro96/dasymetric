@@ -105,6 +105,7 @@ errors = st_join(aw_pop|> select(District = NAME_STATI, Prediction_Inaccuracy_AW
 cat("Absolute error of aw-interpolation: ",sum(errors$Prediction_Inaccuracy_AW_Interpolation))
 cat("Absolute error of dasymetric mapping: ",sum(errors$Prediction_Inaccuracy_Dasymetric_Mapping))
 errors
-tmap::tm_shape(errors) + tmap::tm_polygons("Prediction_Inaccuracy_AW_Interpolation", title = "Absolute Errors (AW)")
-tmap::tm_shape(errors) + tmap::tm_polygons("Prediction_Inaccuracy_Dasymetric_Mapping", title = "Absolute Errors (DM)")
+err1 = tmap::tm_shape(errors) + tmap::tm_polygons("Prediction_Inaccuracy_AW_Interpolation", title = "Absolute Errors (AW)")
+err2 = tmap::tm_shape(errors) + tmap::tm_polygons("Prediction_Inaccuracy_Dasymetric_Mapping", title = "Absolute Errors (DM)")
+tmap_arrange(err1,err2, ncol = 2)
 ```
