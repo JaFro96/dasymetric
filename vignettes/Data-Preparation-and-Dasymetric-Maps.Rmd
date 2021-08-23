@@ -98,7 +98,7 @@ aw_pop = areal::aw_interpolate(population_counts,NR_STATIST,source = source, sid
 tmap::tm_shape(aw_pop) + tmap::tm_polygons("pop_prediction", title = "AW-interpolation")
 ```
 
-```{r}
+```{r display-errors}
 aw_pop$pred_inaccuracy = abs(aw_pop$population - aw_pop$pop_prediction)
 # st_geometry(aw_pop) = NULL
 errors = st_join(aw_pop|> select(District = NAME_STATI, Prediction_Inaccuracy_AW_Interpolation = pred_inaccuracy),dm_pop|> select(District = NAME_STATI, Prediction_Inaccuracy_Dasymetric_Mapping = pred_inaccuracy), largest = TRUE)
