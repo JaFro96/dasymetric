@@ -7,7 +7,7 @@
 #'  \item{NR_STATIST}{Number of the district.}
 #'  \item{NAME_STATI}{Name of the district.}
 #'  \item{STADTBEZIR}{Number and name of the borough.}
-#'  \item{pop_counts}{Population number.}
+#'  \item{population}{Population number.}
 #'  \item{SHAPE_AREA}{Area of the district.}
 #'  \item{geometry}{Geometry of the district.}
 #'  }
