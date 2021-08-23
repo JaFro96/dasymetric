@@ -3,6 +3,9 @@
 \name{dasymetric_map}
 \alias{dasymetric_map}
 \title{Create a dasymetric map}
+\source{
+\url{https://github.com/slu-openGIS/areal/pull/27/commits/d86490f6544af4235bdbdf5f51a9cab000d2b78e}
+}
 \usage{
 dasymetric_map(target, source, ancillary_data, tid = NULL, extensive = NULL)
 }

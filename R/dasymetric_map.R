@@ -14,6 +14,8 @@
 #' @return sf
 #' @export
 #'
+#' @source <https://github.com/slu-openGIS/areal/pull/27/commits/d86490f6544af4235bdbdf5f51a9cab000d2b78e>
+#'
 #' @examples
 #' source_geom = sf::st_union(population_counts)
 #' source=sf::st_sf(ID=1,population=sum(population_counts["population"]$population),source_geom)
