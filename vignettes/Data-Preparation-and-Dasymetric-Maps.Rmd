@@ -20,6 +20,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
+library(areal)
 library(dasymetric)
 library(sf)
 library(tmap)
@@ -66,7 +67,7 @@ For the following analysis we assume that people live in the two **urban fabric*
 ```{r prepare-landuse}
 urban_fabric = prep_landuse(grouped_cor)
 tmap::tmap_mode("plot")
-tmap::tm_shape(population) + 
+tmap::tm_shape(population_counts) + 
   tmap::tm_borders() + 
   tmap::tm_shape(urban_fabric) + 
   tmap::tm_polygons("class_names") + 
@@ -80,7 +81,30 @@ source_geom = sf::st_union(population_counts)
 source = sf::st_sf(ID = 1, pop_prediction = sum(population_counts["population"]$population), source_geom)
 
 dm_pop = dasymetric_map(population_counts, source, urban_fabric, extensive = "pop_prediction")
-tmap::tm_shape(dm_pop) + tmap::tm_polygons("pop_prediction")
+tmap::tm_shape(dm_pop) + tmap::tm_polygons("pop_prediction", title = "DM-interpolation")
 # plot(dm_pop["pop_prediction"],main="Dasymetric population map based on land use information (2018)")
 ```
 
+## Compare the outcome
+```{r comparison}
+dm_pop$pred_inaccuracy = abs(dm_pop$population - dm_pop$pop_prediction)
+# st_geometry(dm_pop) = NULL
+dm_pop|> select(District = NAME_STATI, Prediction_Inaccuracy_Dasymetric_Mapping = pred_inaccuracy)
+```
+
+Comparison with areal-weighted interpolation
+```{r aw-interpolation, echo = FALSE, messages = FALSE}
+aw_pop = areal::aw_interpolate(population_counts,NR_STATIST,source = source, sid = ID,weight = "sum", extensive = "pop_prediction", output = "sf")
+tmap::tm_shape(aw_pop) + tmap::tm_polygons("pop_prediction", title = "AW-interpolation")
+```
+
+```{r}
+aw_pop$pred_inaccuracy = abs(aw_pop$population - aw_pop$pop_prediction)
+# st_geometry(aw_pop) = NULL
+errors = st_join(aw_pop|> select(District = NAME_STATI, Prediction_Inaccuracy_AW_Interpolation = pred_inaccuracy),dm_pop|> select(District = NAME_STATI, Prediction_Inaccuracy_Dasymetric_Mapping = pred_inaccuracy), largest = TRUE)
+cat("Absolute error of aw-interpolation: ",sum(errors$Prediction_Inaccuracy_AW_Interpolation))
+cat("Absolute error of dasymetric mapping: ",sum(errors$Prediction_Inaccuracy_Dasymetric_Mapping))
+errors
+tmap::tm_shape(errors) + tmap::tm_polygons("Prediction_Inaccuracy_AW_Interpolation", title = "Absolute Errors (AW)")
+tmap::tm_shape(errors) + tmap::tm_polygons("Prediction_Inaccuracy_Dasymetric_Mapping", title = "Absolute Errors (DM)")
+```

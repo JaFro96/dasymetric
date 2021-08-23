@@ -16,9 +16,9 @@
 #'
 #' @examples
 #' source_geom = sf::st_union(population_counts)
-#' source = sf::st_sf(ID = 1, pop_sum = sum(population_counts["pop_counts"]$pop_counts), source_geom)
+#' source=sf::st_sf(ID=1,population=sum(population_counts["population"]$population),source_geom)
 #' urban = prep_landuse(corine_18)
-#' dasymetric_map(population_counts, source, urban, extensive = "pop_sum")
+#' dasymetric_map(population_counts, source, urban, extensive = "population")
 dasymetric_map <- function(target, source, ancillary_data, tid = NULL, extensive = NULL) {
 
   # Add IDs
