@@ -12,6 +12,7 @@ Description: Dasymetric maps display statistical data in meaningful spatial zone
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+LazyDataCompression: gzip
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Suggests: 

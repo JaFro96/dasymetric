@@ -41,7 +41,8 @@ Population data for the districts in Münster can be obtained by their [open dat
 
 ```{r districts}
 data(population_counts)
-tmap::tm_shape(population_counts) + tmap::tm_polygons("population")
+map_census = tmap::tm_shape(population_counts) + tmap::tm_polygons("population", title = "Census data (2018)")
+map_census
 ```
 
 The European Union's Earth Observation Programme - Copernicus - offers freely and openly accessible services that are based on in situ and on satellite data. One of the six thematic services is land monitoring, which provides information on land cover in 44 classes. The latest product is based on Sentinel-2 satellite data from 2018 (European Environment Agency, 2018). The German _Bundesamt für Kartographie und Geodäsie_ provides data with the same nomenclature based on _Landbedeckungsmodell Deutschland 2018 (LBM-DE2018)_ [product](https://gdz.bkg.bund.de/index.php/default/digitale-geodaten/digitale-landschaftsmodelle/corine-land-cover-5-ha-stand-2018-clc5-2018.html) with a geometric detail of 5 hectare minimum mapping unit.
@@ -67,16 +68,23 @@ For the following analysis we assume that people live in the two **urban fabric*
 ```{r prepare-landuse}
 urban_fabric = prep_landuse(grouped_cor)
 tmap::tmap_mode("plot")
-tmap::tm_shape(population_counts) + 
+map_lu = tmap::tm_shape(population_counts) + 
   tmap::tm_borders() + 
   tmap::tm_shape(urban_fabric) + 
   tmap::tm_polygons("class_names") + 
   tmap::tm_layout(frame.lwd = 3, legend.position = c("right", "top"))
+
+data("buildings")
+map_bu = tmap::tm_shape(population_counts) + 
+  tmap::tm_borders() + 
+  tmap::tm_shape(buildings) + 
+  tmap::tm_polygons("funktion") + 
+  tmap::tm_layout(frame.lwd = 3, legend.position = c("right", "top"))
+tmap_arrange(map_lu, map_bu, ncol = 1)
 ```
 
 ## Create dasymetric map
 ```{r dasymetric-map}
-data(buildings)
 # Create source object: Münster with its population
 source_geom = sf::st_union(population_counts)
 source = sf::st_sf(ID = 1, pop_prediction = sum(population_counts["population"]$population), source_geom)
@@ -84,9 +92,9 @@ source = sf::st_sf(ID = 1, pop_prediction = sum(population_counts["population"]$
 dm_pop = dasymetric_map(population_counts, source, urban_fabric, extensive = "pop_prediction")
 dm_pop_buildings = dasymetric_map(population_counts, source, buildings, extensive = "pop_prediction")
 
-tmap::tm_shape(population_counts) + tmap::tm_polygons("population", title = "Census data (2018)")
-tmap::tm_shape(dm_pop) + tmap::tm_polygons("pop_prediction", title = "DM-interpolation (landuse)")
-tmap::tm_shape(dm_pop_buildings) + tmap::tm_polygons("pop_prediction", title = "DM-interpolation (buildings)")
+map_dm_lu = tmap::tm_shape(dm_pop) + tmap::tm_polygons("pop_prediction", title = "DM-interpolation (landuse)")
+map_dm_bu = tmap::tm_shape(dm_pop_buildings) + tmap::tm_polygons("pop_prediction", title = "DM-interpolation (buildings)")
+tmap_arrange(map_dm_bu, map_dm_lu,map_census, ncol = 2)
 ```
 
 ## Compare the outcome
@@ -107,9 +115,12 @@ tmap::tm_shape(aw_pop) + tmap::tm_polygons("pop_prediction", title = "AW-interpo
 aw_pop$pred_inaccuracy = abs(aw_pop$population - aw_pop$pop_prediction)
 errors = st_join(aw_pop|> select(District = NAME_STATI, Prediction_Inaccuracy_AW_Interpolation = pred_inaccuracy),dm_pop|> select(District = NAME_STATI, Prediction_Inaccuracy_Dasymetric_Mapping = pred_inaccuracy), largest = TRUE)
 cat("Absolute error of aw-interpolation: ",sum(errors$Prediction_Inaccuracy_AW_Interpolation))
-cat("Absolute error of dasymetric mapping: ",sum(errors$Prediction_Inaccuracy_Dasymetric_Mapping))
+cat("Absolute error of dasymetric mapping using landuse data: ",sum(errors$Prediction_Inaccuracy_Dasymetric_Mapping))
+cat("Absolute error of dasymetric mapping using building footprints: ",sum(dm_pop_buildings$pred_inaccuracy))
 errors
 err1 = tmap::tm_shape(errors) + tmap::tm_polygons("Prediction_Inaccuracy_AW_Interpolation", title = "Absolute Errors (AW)")
-err2 = tmap::tm_shape(errors) + tmap::tm_polygons("Prediction_Inaccuracy_Dasymetric_Mapping", title = "Absolute Errors (DM)")
-tmap_arrange(err1,err2, ncol = 2)
+err2 = tmap::tm_shape(errors) + tmap::tm_polygons("Prediction_Inaccuracy_Dasymetric_Mapping", title = "Absolute Errors (DM landuse)")
+err3 = tmap::tm_shape(dm_pop_buildings) + tmap::tm_polygons("pred_inaccuracy", title = "Absolute Errors (DM buildings)")
+true_vals = tmap::tm_shape(population_counts) + tmap::tm_polygons("population", title = "Census data (2018")
+tmap_arrange(err1,err2,err3, true_vals, ncol = 2)
 ```
