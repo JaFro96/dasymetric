@@ -49,6 +49,7 @@ The European Union's Earth Observation Programme - Copernicus - offers freely an
 
 ```{r land-use}
 data(corine_18)
+# group polygons by their class ids
 grouped_cor = corine_18 |> dplyr::group_by(CLC18) |> dplyr::summarize(geometry = sf::st_union(geometry))
 class_names = c("Continuous urban fabric","Discontinuous urban fabric",
                 "Industrial or commercial units","Road and rail networks and associated land",
@@ -58,69 +59,80 @@ class_names = c("Continuous urban fabric","Discontinuous urban fabric",
                 "Pastures","Broad-leaved forest","Coniferous forest","Mixed forest",
                 "Natural grassland","Transitional woodland-scrub","Inland marshes",
                 "Peat bogs","Water courses","Water bodies")
+# add class names
 grouped_cor$class_names = class_names
+# visualize land use
+data("buildings")
 tmap::tmap_mode("view")
-tmap::tm_shape(grouped_cor) + tmap::tm_polygons("class_names")
+tmap::tm_shape(grouped_cor) + tmap::tm_polygons("class_names") +
+  tmap::tm_shape(population_counts) + 
+  tmap::tm_borders()
 ```
 
 For the following analysis we assume that people live in the two **urban fabric** land cover classes  ( _Continuous urban fabric_ , 111) and _Discontinuous urban fabric_ , 112).
 
-```{r prepare-landuse}
+```{r prepare-ancillary-data}
 urban_fabric = prep_landuse(grouped_cor)
 tmap::tmap_mode("plot")
-map_lu = tmap::tm_shape(population_counts) + 
+tmap::tm_shape(population_counts) + 
   tmap::tm_borders() + 
   tmap::tm_shape(urban_fabric) + 
   tmap::tm_polygons("class_names") + 
   tmap::tm_layout(frame.lwd = 3, legend.position = c("right", "top"))
-
-data("buildings")
-map_bu = tmap::tm_shape(population_counts) + 
+tmap::tm_shape(population_counts) + 
   tmap::tm_borders() + 
   tmap::tm_shape(buildings) + 
   tmap::tm_polygons("funktion") + 
   tmap::tm_layout(frame.lwd = 3, legend.position = c("right", "top"))
-tmap_arrange(map_lu, map_bu, ncol = 1)
 ```
 
 ## Create dasymetric map
 ```{r dasymetric-map}
-# Create source object: Münster with its population
+# create one unified polygon
 source_geom = sf::st_union(population_counts)
+# Create source object: Münster with its population
 source = sf::st_sf(ID = 1, pop_prediction = sum(population_counts["population"]$population), source_geom)
-
+# Dasymetric map with land use
 dm_pop = dasymetric_map(population_counts, source, urban_fabric, extensive = "pop_prediction")
+# Dasymetric map with building footprints
 dm_pop_buildings = dasymetric_map(population_counts, source, buildings, extensive = "pop_prediction")
 
-map_dm_lu = tmap::tm_shape(dm_pop) + tmap::tm_polygons("pop_prediction", title = "DM-interpolation (landuse)")
-map_dm_bu = tmap::tm_shape(dm_pop_buildings) + tmap::tm_polygons("pop_prediction", title = "DM-interpolation (buildings)")
-tmap_arrange(map_dm_bu, map_dm_lu,map_census, ncol = 2)
+# do areal-weighted interpolation for comparison
+aw_pop = areal::aw_interpolate(population_counts,NR_STATIST,source = source, sid = ID,weight = "sum", extensive = "pop_prediction", output = "sf")
+map_aw = tmap::tm_shape(aw_pop) + tmap::tm_polygons("pop_prediction", title = "AW-interpolation")
+
+# visualize output
+map_dm_lu = tmap::tm_shape(dm_pop) + tmap::tm_polygons("pop_prediction", title = "DM land use")
+map_dm_bu = tmap::tm_shape(dm_pop_buildings) + tmap::tm_polygons("pop_prediction", title = "DM buildings")
+tmap_arrange(map_dm_bu, map_dm_lu, map_aw, map_census, ncol = 2)
 ```
 
 ## Compare the outcome
 ```{r comparison}
+# compute absolute errors of dasymetric mapping (land use)
 dm_pop$pred_inaccuracy = abs(dm_pop$population - dm_pop$pop_prediction)
+# compute absolute errors of dasymetric mapping (buildings)
 dm_pop_buildings$pred_inaccuracy = abs(dm_pop_buildings$population - dm_pop_buildings$pop_prediction)
+# create tibble output to see errors for each district
 dm_pop|> select(District = NAME_STATI, Prediction_Inaccuracy_Dasymetric_Mapping = pred_inaccuracy)
 dm_pop_buildings|> select(District = NAME_STATI, Prediction_Inaccuracy_Dasymetric_Mapping = pred_inaccuracy)
 ```
 
-Comparison with areal-weighted interpolation
-```{r aw-interpolation, echo = FALSE, messages = FALSE}
-aw_pop = areal::aw_interpolate(population_counts,NR_STATIST,source = source, sid = ID,weight = "sum", extensive = "pop_prediction", output = "sf")
-tmap::tm_shape(aw_pop) + tmap::tm_polygons("pop_prediction", title = "AW-interpolation")
-```
-
 ```{r display-errors}
+# compute errors of aw-interpolation
 aw_pop$pred_inaccuracy = abs(aw_pop$population - aw_pop$pop_prediction)
-errors = st_join(aw_pop|> select(District = NAME_STATI, Prediction_Inaccuracy_AW_Interpolation = pred_inaccuracy),dm_pop|> select(District = NAME_STATI, Prediction_Inaccuracy_Dasymetric_Mapping = pred_inaccuracy), largest = TRUE)
-cat("Absolute error of aw-interpolation: ",sum(errors$Prediction_Inaccuracy_AW_Interpolation))
-cat("Absolute error of dasymetric mapping using landuse data: ",sum(errors$Prediction_Inaccuracy_Dasymetric_Mapping))
+# errors = st_join(aw_pop|> select(District = NAME_STATI, Prediction_Inaccuracy_AW_Interpolation = pred_inaccuracy),dm_pop|> select(District = NAME_STATI, Prediction_Inaccuracy_Dasymetric_Mapping = pred_inaccuracy), largest = TRUE)
+# output absolute errors
+cat("Absolute error of aw-interpolation: ",sum(aw_pop$pred_inaccuracy))
+cat("Absolute error of dasymetric mapping using land use data: ",sum(dm_pop$pred_inaccuracy))
 cat("Absolute error of dasymetric mapping using building footprints: ",sum(dm_pop_buildings$pred_inaccuracy))
-errors
-err1 = tmap::tm_shape(errors) + tmap::tm_polygons("Prediction_Inaccuracy_AW_Interpolation", title = "Absolute Errors (AW)")
-err2 = tmap::tm_shape(errors) + tmap::tm_polygons("Prediction_Inaccuracy_Dasymetric_Mapping", title = "Absolute Errors (DM landuse)")
+
+err1 = tmap::tm_shape(aw_pop) + tmap::tm_polygons("pred_inaccuracy", title = "Absolute Errors (AW)")
+err2 = tmap::tm_shape(dm_pop) + tmap::tm_polygons("pred_inaccuracy", title = "Absolute Errors (DM land use)")
 err3 = tmap::tm_shape(dm_pop_buildings) + tmap::tm_polygons("pred_inaccuracy", title = "Absolute Errors (DM buildings)")
-true_vals = tmap::tm_shape(population_counts) + tmap::tm_polygons("population", title = "Census data (2018")
+true_vals = tmap::tm_shape(population_counts) + tmap::tm_polygons("population", title = "Census data (2018)")
 tmap_arrange(err1,err2,err3, true_vals, ncol = 2)
 ```
+
+In this case study more accurate predictions of an extensive variable ( _population counts_ ) were made. Compared to an absolute error of `305181` for areal-weighted interpolation, dasymetric mapping with land use information reduced the error to `103122` and dasymetric mapping based on building footprints reduced the absolute error to `71146`.
+

@@ -1,6 +1,6 @@
 #' Create a dasymetric map
 #'
-#' @description Advanced dasymetric mapping that uses CORINE land use classes to make more valuable predictions on population counts
+#' @description IMMATURE! Advanced dasymetric mapping that uses CORINE land use classes to make more valuable predictions on population counts
 #'
 #' @import graphics
 #' @importFrom rlang .data
