@@ -4,7 +4,8 @@
 \alias{dasymetric_map_adv}
 \title{Create a dasymetric map}
 \source{
-\url{https://github.com/slu-openGIS/areal/pull/27/commits/d86490f6544af4235bdbdf5f51a9cab000d2b78e}
+\url{https://github.com/slu-openGIS/areal/pull/27/commits/d86490f6544af4235bdbdf5f51a9cab000d2b78e},
+\url{https://www.eea.europa.eu/data-and-maps/data/population-density/mapping-population-density/mapping-population-density/download}
 }
 \usage{
 dasymetric_map_adv(
@@ -30,10 +31,13 @@ dasymetric_map_adv(
 sf
 }
 \description{
-Advanced dasymetric mapping that uses CORINE land use classes to make more valuable predictions on population counts
+IMMATURE! RESULTS IN WAY TOO LESS POPULATION! Advanced dasymetric mapping that uses CORINE land use classes to make more valuable predictions on population counts. R
 }
 \examples{
 source_geom = sf::st_union(population_counts)
 source=sf::st_sf(ID=1,population=sum(population_counts["population"]$population),source_geom)
 dasymetric_map_adv(population_counts, source, corine_18, extensive = "population")
+}
+\references{
+Peedell, Steve (1999): Mapping Population Density. Distribution of Population using CORINE Land Cover. Ispra.
 }

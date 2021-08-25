@@ -10,7 +10,7 @@
 #' @return sf containing geometries where people probably live
 #' @export
 #'
-#' @seealso \code{\link{dasymetric_map}} for using the prepared dataset
+#' @seealso \code{\link{dasymetric_map}} using the prepared dataset
 #'
 #' @examples
 #' prep_landuse(corine_18)

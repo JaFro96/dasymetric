@@ -21,5 +21,5 @@ Extract features of a \emph{CORINE} land use sf that cover urban area.
 prep_landuse(corine_18)
 }
 \seealso{
-\code{\link{dasymetric_map}} for using the prepared dataset
+\code{\link{dasymetric_map}} using the prepared dataset
 }

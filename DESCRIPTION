@@ -1,6 +1,6 @@
 Package: dasymetric
 Title: Create Dasymetric Maps
-Version: 0.0.0.9003
+Version: 0.0.1
 Authors@R: 
     person(given = "Jannis",
            family = "Fröhlking",
