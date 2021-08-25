@@ -1,6 +1,6 @@
 #' Create a dasymetric map
 #'
-#' @description IMMATURE! Advanced dasymetric mapping that uses CORINE land use classes to make more valuable predictions on population counts
+#' @description IMMATURE! RESULTS IN WAY TOO LESS POPULATION! Advanced dasymetric mapping that uses CORINE land use classes to make more valuable predictions on population counts. R
 #'
 #' @import graphics
 #' @importFrom rlang .data
@@ -14,7 +14,10 @@
 #' @return sf
 #' @export
 #'
-#' @source <https://github.com/slu-openGIS/areal/pull/27/commits/d86490f6544af4235bdbdf5f51a9cab000d2b78e>
+#' @source <https://github.com/slu-openGIS/areal/pull/27/commits/d86490f6544af4235bdbdf5f51a9cab000d2b78e>,
+#'  <https://www.eea.europa.eu/data-and-maps/data/population-density/mapping-population-density/mapping-population-density/download>
+#'
+#' @references Peedell, Steve (1999): Mapping Population Density. Distribution of Population using CORINE Land Cover. Ispra.
 #'
 #' @examples
 #' source_geom = sf::st_union(population_counts)
@@ -22,7 +25,7 @@
 #' dasymetric_map_adv(population_counts, source, corine_18, extensive = "population")
 dasymetric_map_adv <- function(target, source, ancillary_data, tid = NULL, extensive = NULL) {
 
-  # Population densities
+  # Population densities are derived from Peedell, Steve (1999): Mapping Population Density. Distribution of Population using CORINE Land Cover. Ispra.
   pop_densities = dplyr::tibble(
     CLC18 = as.character(
               c(111,112,121,122,123,124,131,132,133,141,142,
@@ -31,7 +34,7 @@ dasymetric_map_adv <- function(target, source, ancillary_data, tid = NULL, exten
               411,412,421,422,423,
               511,512,521,522,523)),
     pop_density = c(32,25,1,1,1,1,0,0,0,1,1,3,3,1,2,2,2,
-      3,5,5,3,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)/10
+      3,5,5,3,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)/100
   )
 
   # Add IDs
