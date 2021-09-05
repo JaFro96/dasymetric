@@ -27,12 +27,12 @@ library(tmap)
 library(dplyr)
 ```
 
-Dasymetric mapping is a mapping technique that  redistribute spatially extensive data using ancillary information to better represent an underlying statistical surface (Petrov, 2012). 
+Dasymetric mapping is a mapping technique to  redistribute **spatially extensive** data using ancillary information to better represent an underlying statistical surface (Petrov, 2012). 
 
 This vignette:
 
-* describes how to prepare land use data as ancillary information
-* creates a dasymetric map of the population in Münster
+* describes how to prepare land use data and building footprints as ancillary information
+* creates dasymetric maps of the population in Münster
 * compares the outcome with the true population counts and with a naive area-weighted interpolation
 
 ## Data preparation
@@ -62,7 +62,6 @@ class_names = c("Continuous urban fabric","Discontinuous urban fabric",
 # add class names
 grouped_cor$class_names = class_names
 # visualize land use
-data("buildings")
 tmap::tmap_mode("view")
 tmap::tm_shape(grouped_cor) + tmap::tm_polygons("class_names") +
   tmap::tm_shape(population_counts) + 
@@ -71,7 +70,7 @@ tmap::tm_shape(grouped_cor) + tmap::tm_polygons("class_names") +
 
 For the following analysis we assume that people live in the two **urban fabric** land cover classes  ( _Continuous urban fabric_ , 111) and _Discontinuous urban fabric_ , 112).
 
-```{r prepare-ancillary-data}
+```{r prepare-ancillary-data-landuse}
 urban_fabric = prep_landuse(grouped_cor)
 tmap::tmap_mode("plot")
 tmap::tm_shape(population_counts) + 
@@ -79,6 +78,12 @@ tmap::tm_shape(population_counts) +
   tmap::tm_shape(urban_fabric) + 
   tmap::tm_polygons("class_names") + 
   tmap::tm_layout(frame.lwd = 3, legend.position = c("right", "top"))
+```
+
+An alternative to land use information as ancillary information is to use building footprints. Buildings are filtered to the classes where we assume that people live there like residential buildings, dormitories, mixed-use buildings, retirement homes, farm houses, houseboats.
+
+```{r prepare-ancillary-data-building-footprints}
+data("buildings")
 tmap::tm_shape(population_counts) + 
   tmap::tm_borders() + 
   tmap::tm_shape(buildings) + 
@@ -127,12 +132,12 @@ cat("Absolute error of aw-interpolation: ",sum(aw_pop$pred_inaccuracy))
 cat("Absolute error of dasymetric mapping using land use data: ",sum(dm_pop$pred_inaccuracy))
 cat("Absolute error of dasymetric mapping using building footprints: ",sum(dm_pop_buildings$pred_inaccuracy))
 
-err1 = tmap::tm_shape(aw_pop) + tmap::tm_polygons("pred_inaccuracy", title = "Absolute Errors (AW)")
+err1 = tmap::tm_shape(dm_pop_buildings) + tmap::tm_polygons("pred_inaccuracy", title = "Absolute Errors (DM buildings)")
 err2 = tmap::tm_shape(dm_pop) + tmap::tm_polygons("pred_inaccuracy", title = "Absolute Errors (DM land use)")
-err3 = tmap::tm_shape(dm_pop_buildings) + tmap::tm_polygons("pred_inaccuracy", title = "Absolute Errors (DM buildings)")
+err3 = tmap::tm_shape(aw_pop) + tmap::tm_polygons("pred_inaccuracy", title = "Absolute Errors (AW)")
 true_vals = tmap::tm_shape(population_counts) + tmap::tm_polygons("population", title = "Census data (2018)")
 tmap_arrange(err1,err2,err3, true_vals, ncol = 2)
 ```
 
-In this case study more accurate predictions of an extensive variable ( _population counts_ ) were made. Compared to an absolute error of `305181` for areal-weighted interpolation, dasymetric mapping with land use information reduced the error to `103122` and dasymetric mapping based on building footprints reduced the absolute error to `71146`.
+In this case study more accurate predictions of an extensive variable ( _population counts_ ) were computed. Compared to an absolute error of `305181` for areal-weighted interpolation, dasymetric mapping with land use information reduced the absolute error to `103122` and dasymetric mapping based on building footprints further reduced the absolute error to `71146`.
 
