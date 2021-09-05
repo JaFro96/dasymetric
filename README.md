@@ -20,23 +20,48 @@ devtools::install_github("JaFro96/dasymetric")
 ## Example
 
 As a case study we try to predict population counts for each district of
-Münster using land cover data as ancillary information.
+Münster (Westfalen) using land cover data as ancillary information.
 
-    #> Lade nötiges Paket: sf
-    #> Linking to GEOS 3.9.0, GDAL 3.2.1, PROJ 7.2.1
+``` r
+# plot population of 2018
+require(sf)
+load("data/population_counts.rda")
+plot(population_counts["population"],breaks = c(0,5000,10000,15000,20000,25000,30000,35000,40000,45000), main="Population (2018)")
+```
 
 <img src="man/figures/README-districts-1.png" width="100%" />
 
-That’s how the population is distributed using area-weighted
-interpolation:
+Below the dasymetric map is plotted which exhibits similar patterns in
+the population distribution
 
-    #> Lade nötiges Paket: areal
+``` r
+require(dasymetric)
+load("data/corine_18.rda")
+urban = prep_landuse(corine_18)
 
-<img src="man/figures/README-aw-interpolation-1.png" width="100%" />
+# source geometry covering entire Münster 
+source_geom = st_union(population_counts)
+# add population of Münster
+source = st_sf(ID = 1, pop_sum = sum(population_counts["population"]$population), source_geom)
 
-    #> Lade nötiges Paket: dasymetric
+# dasymetric map with landuse information as ancillary data
+dm_pop = dasymetric_map(population_counts, source, urban, extensive = "pop_sum")
+plot(dm_pop["pop_sum"],breaks = c(0,5000,10000,15000,20000,25000,30000,35000,40000,45000),main="Dasymetric Population Map based on Land Use Information (2018)")
+```
 
 <img src="man/figures/README-dasymetric-1.png" width="100%" />
+
+… contrary to the population distribution using area-weighted
+interpolation:
+
+``` r
+require(areal)
+# Area-weighted interpolation of Münsters districts
+aw_pop = aw_interpolate(population_counts,NR_STATIST,source = source, sid = ID,weight = "sum", extensive = "pop_sum", output = "sf")
+plot(aw_pop["pop_sum"],breaks = c(0,5000,10000,15000,20000,25000,30000,35000,40000,45000),main="Area-weighted Interpolation of Population (2018)")
+```
+
+<img src="man/figures/README-aw-interpolation-1.png" width="100%" />
 
 ## Data Sources
 

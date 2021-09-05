@@ -28,40 +28,41 @@ devtools::install_github("JaFro96/dasymetric")
 ```
 ## Example
 
-As a case study we try to predict population counts for each district of Münster using land cover data as ancillary information.
+As a case study we try to predict population counts for each district of Münster (Westfalen) using land cover data as ancillary information.
 
-```{r districts, echo = FALSE}
+```{r districts, message=FALSE}
+# plot population of 2018
 require(sf)
 load("data/population_counts.rda")
-plot(population_counts["pop_counts"],breaks = c(0,5000,10000,15000,20000,25000,30000,35000,40000,45000), main="Population (2018)")
+plot(population_counts["population"],breaks = c(0,5000,10000,15000,20000,25000,30000,35000,40000,45000), main="Population (2018)")
 ```
 
-That's how the population is distributed using area-weighted interpolation:
+Below the dasymetric map is plotted which exhibits similar patterns in the population distribution
 
-```{r aw-interpolation, echo = FALSE, messages = FALSE}
-require(areal)
-# total population
-# sum(population_counts["pop_counts"]$pop_counts) # 310610
-# big polygon
+```{r dasymetric, warning=FALSE, message=FALSE}
+require(dasymetric)
+load("data/corine_18.rda")
+urban = prep_landuse(corine_18)
+
+# source geometry covering entire Münster 
 source_geom = st_union(population_counts)
-source = st_sf(ID = 1, pop_sum = sum(population_counts["pop_counts"]$pop_counts), source_geom)
+# add population of Münster
+source = st_sf(ID = 1, pop_sum = sum(population_counts["population"]$population), source_geom)
+
+# dasymetric map with landuse information as ancillary data
+dm_pop = dasymetric_map(population_counts, source, urban, extensive = "pop_sum")
+plot(dm_pop["pop_sum"],breaks = c(0,5000,10000,15000,20000,25000,30000,35000,40000,45000),main="Dasymetric Population Map based on Land Use Information (2018)")
+```
+
+... contrary to the population distribution using area-weighted interpolation:
+
+```{r aw-interpolation,  message = FALSE}
+require(areal)
+# Area-weighted interpolation of Münsters districts
 aw_pop = aw_interpolate(population_counts,NR_STATIST,source = source, sid = ID,weight = "sum", extensive = "pop_sum", output = "sf")
 plot(aw_pop["pop_sum"],breaks = c(0,5000,10000,15000,20000,25000,30000,35000,40000,45000),main="Area-weighted Interpolation of Population (2018)")
 ```
 
-```{r dasymetric, echo=FALSE, warning=FALSE, messages=FALSE}
-require(dasymetric)
-load("data/corine_18.rda")
-urban = prep_landuse(corine_18)
-dm_pop = dasymetric_map(population_counts, source, urban, extensive = "pop_sum")
-plot(dm_pop["pop_sum"],breaks = c(0,5000,10000,15000,20000,25000,30000,35000,40000,45000),main="Dasymetric population map based on land use information (2018)")
-```
-
-
-```{r land_cover, echo = FALSE, include = FALSE}
-require(sf)
-plot(corine_18[1],main="Land cover of Münster")
-```
 
 ## Data Sources
 - CORINE Land Cover 5 ha --> [© GeoBasis-DE / BKG (2021)](https://gdz.bkg.bund.de/index.php/default/catalog/product/view/id/1071/s/corine-land-cover-5-ha-stand-2018-clc5-2018/category/8/?___store=default)
